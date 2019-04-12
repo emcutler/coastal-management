@@ -69,7 +69,8 @@ pars.epsilon = 0; % increase in storm induced erosion with SLR
 pars.d = 0; % development rate constant (1/yr)
 pars.alpha = (1+0.01)^3.2808; % property value increase due to 1 m increase in beach width
 pars.beta = 0.5;%(1-0.147)^3.2808; % property value decrease due to 1 m increase in sea level
-pars.A = pars.v_init/(pars.alpha^pars.x_init); % baseline property value
+pars.A = 669000;
+pars.v_init = pars.A*(pars.alpha^pars.x_init); % baseline property value
 pars.W = 5e5; % non-structural value at risk
 
 % Benefit and cost parameters

@@ -7,6 +7,9 @@
 % Outputs:
 %   optS: optimal states
 %   actions: optimal strategy
+%   x: optimal time path of beach width
+%   V: optimal time path of property value
+%   L: sea level
 %   NPV: net present value of optimal strategy
 %   C: vector of undiscounted costs
 %   benefits: vector of undiscounted benefits
@@ -18,8 +21,7 @@
 %   cost
 %   benefit
 
-function [optS,actions,NPV,C,B,valueFunc] = main(pars)
-
+function [optS,actions,x,V,L,NPV,C,B,valueFunc] = main(pars)
 %% Parameter values
 if ~exist('pars','var')
     pars = parameters(0);
@@ -124,6 +126,7 @@ else
 end
 
 optS = S(Si,:);
+[x,V,L] = xVL(optS,pars);
 
 %% Calculate costs and benefits
 C = cost(optS,actions,pars);

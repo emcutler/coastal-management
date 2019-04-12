@@ -8,7 +8,7 @@
 % Saves output to specified output folder
 
 %% Specify location to save outputs
-output_folder = 'TestOutputs';
+output_folder = 'OutputApr11';
 
 %% Specify tests to run
 Discount = 1;
@@ -24,14 +24,14 @@ W = 1;
 WVals = 5;
 if W
     pars = parameters(0); 
-    social = linspace(pars.socialMin,pars.socialMax,WVals);
+    W_vec = linspace(pars.WMin,pars.WMax,WVals);
     strategy = cell(WVals,3);
     optS = cell(WVals,3);
     NPV = cell(WVals,3);
     for scenario = 0:2
         pars = parameters(scenario);
         for i = 1:WVals
-            pars.social = social(i);   
+            pars.W = W_vec(i);   
             
             % Solve system and save outputs of interest
             [S,actions,x,V,~,presentVal] = main(pars);
@@ -43,7 +43,7 @@ if W
     WOutput.NPV = NPV;
     WOutput.optS = optS;
     WOutput.strategy = strategy;
-    WOutput.social = social;
+    WOutput.W = W_vec;
     save(strcat(output_folder,'/WOutput'),'WOutput');
 end
 
@@ -290,7 +290,7 @@ end
 %% Time horizon
 if Horizon
     
-    T = [10;20;50;75;100;Inf]; 
+    T = [10;20;50;80;100;Inf]; 
     NPV = cell(length(T),3);
     strategy = cell(length(T),3);
     optS = cell(length(T),3);
