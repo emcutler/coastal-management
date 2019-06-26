@@ -8,17 +8,46 @@
 % Saves output to specified output folder
 
 %% Specify location to save outputs
-output_folder = 'OutputApr11';
+output_folder = 'OutputJun19_polynomial';
 
 %% Specify tests to run
-Discount = 1;
-Development = 1; 
-Damage = 1;
-SandCost = 1;
-Storms = 1;
-SeaLevel = 1;
-Horizon = 1;
-W = 1;
+Discount = 0;
+Development = 0; 
+Damage = 0;
+SandCost = 0;
+Storms = 0;
+SeaLevel = 0;
+Horizon = 0;
+W = 0;
+tax = 0;
+
+%% Tax Rate
+taxVals = 5;
+if tax
+    pars = parameters(0); 
+    tax_vec = linspace(pars.lMin,pars.lMax,taxVals);
+    strategy = cell(taxVals,3);
+    optS = cell(taxVals,3);
+    NPV = cell(taxVals,3);
+    for scenario = 0:2
+        pars = parameters(scenario);
+        for i = 1:taxVals
+            pars.l = tax_vec(i);   
+            
+            % Solve system and save outputs of interest
+            [S,actions,x,V,~,presentVal] = main(pars);
+            optS(i,scenario+1) = {[x V S]};
+            strategy(i,scenario+1) = {actions};
+            NPV(i,scenario+1) = {presentVal};
+        end
+    end
+    TaxOutput.NPV = NPV;
+    TaxOutput.optS = optS;
+    TaxOutput.strategy = strategy;
+    TaxOutput.l = tax_vec;
+    save(strcat(output_folder,'/TaxOutput'),'TaxOutput');
+end
+
 
 %% Other value
 WVals = 5;
@@ -183,7 +212,7 @@ end
 
 %% Damage functions
 if Damage
-    funcs = {'polynomial1','linear','exponential','concave'};
+    funcs = {'polynomial','linear','exponential','concave'};
     n = length(funcs);
     NPV = cell(n,3);
     optS = cell(n,3);

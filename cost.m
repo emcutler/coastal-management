@@ -32,8 +32,10 @@ elseif strcmp(pars.Cfunc, 'exponential')
     damageCost = (pars.D0*pars.phi_exp.^L./pars.kappa.^(x)).*(V+pars.W*(R<pars.relocationDelay));
 elseif strcmp(pars.Cfunc, 'concave')
     damageCost = (pars.D0*(1+pars.phi_conc*(1-exp(-L)))./pars.kappa.^(x)).*(V+pars.W*(R<pars.relocationDelay));
-else
+elseif strcmp(pars.Cfunc, 'polynomial')
     damageCost = (pars.D0*(1+L).^pars.phi_poly./pars.kappa.^(x)).*(V+pars.W*(R<pars.relocationDelay));
+else
+    error('Select damage function')
 end
 
 % Restrict nourishment interval to minimum of pars.minInterval

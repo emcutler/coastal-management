@@ -76,13 +76,13 @@ pars.W = 5e5; % non-structural value at risk
 % Benefit and cost parameters
 pars.delta = 0.0275; % Discount rate
 pars.eta = 824; % land value ($1000/m), assumes $14/sq ft and 5470 m of beach length
-pars.l = 0.0041; % St. Lucie County general fund tax rate
+pars.l = 0.22;%0.0041; % St. Lucie County general fund tax rate
 pars.c1 = 12000; % fixed cost of nourishment ($1000), assumes $14 million per nourishment, c2=350
 pars.c2 = 350; % variable cost of nourishment ($1000/m), assumes $9.55/m^3, 5470 m of beach length, and 224,000 m^3 per 6.096 m nourishment
 pars.xi = 0; % exponential increase in c2 as time progresses (0 means cost is autonomous)
 pars.constructionCosts = 0;
 
-pars.Cfunc = 'polynomial';
+pars.Cfunc = 'concave';
 pars.phi_exp =  5.6999; % sea level base for proportion damaged
 pars.phi_lin = 61.3951;
 pars.phi_conc = 193.8357;
@@ -140,5 +140,7 @@ pars.muMin = 0.5;
 pars.muMax = 1;
 pars.WMin = 2e5;
 pars.WMax = 1e6;
+pars.lMin = 0.176;
+pars.lMax = 0.264;
 
 end
