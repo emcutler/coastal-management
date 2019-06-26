@@ -82,7 +82,7 @@ pars.c2 = 350; % variable cost of nourishment ($1000/m), assumes $9.55/m^3, 5470
 pars.xi = 0; % exponential increase in c2 as time progresses (0 means cost is autonomous)
 pars.constructionCosts = 0;
 
-pars.Cfunc = 'concave';
+pars.Cfunc = 'polynomial';
 pars.phi_exp =  5.6999; % sea level base for proportion damaged
 pars.phi_lin = 61.3951;
 pars.phi_conc = 193.8357;
