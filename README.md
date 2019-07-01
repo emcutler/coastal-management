@@ -2,7 +2,7 @@
 Identifies adaptation strategies consisting of beach nourishment and managed retreat using discrete dynamic programming
 
 Reference for accompnanying paper:
-Cutler, E.M., Albert, M.R., White, K.D., 2019. "A Dynamic Programming Approach to Coastal Adaptation."
+Cutler, E.M., Albert, M.R., White, K.D. "Tradeoffs Between Beach Nourishment and Managed Retreat: Insights from Dynamic Programming for Climate Adaptation Decisions." Environmental Modelling and Software. In review
 
 The model can be run from the file main.m which takes a parameter struct as an optional input. An appropriate struct can be generated using parameters.m. Outputs include an optimal action vector and corresponding optimal states and value function. The script tests.m can be used to run sensitivity analysis on selected input parameters
 
