@@ -81,6 +81,7 @@ model.svars = svars;
 model.T = pars.T;
 
 options.keepall = 1;
+options.print = 2;
 
 results = mdpsolve(model,options);
 

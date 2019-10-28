@@ -8,11 +8,11 @@
 % Saves output to specified output folder
 
 %% Specify location to save outputs
-output_folder = 'OutputJun19_polynomial';
+output_folder = 'OutputAug24_exponential';
 
 %% Specify tests to run
 Discount = 0;
-Development = 0; 
+Development = 1; 
 Damage = 0;
 SandCost = 0;
 Storms = 0;
@@ -104,58 +104,58 @@ end
 
 %% Effect of coastal development and property value parameters
 if Development
-    
-    % Effect of development parameters: alpha and beta
-    scenarios = 0:2; 
-    NPV = cell(3,3,length(scenarios));
-    optS = cell(3,3,length(scenarios));
-    strategy = cell(3,3,length(scenarios));
-    for s = 1:length(scenarios)
-        scenario = scenarios(s);
-        pars = parameters(scenario);
-        alpha = linspace(pars.alphaMin,pars.alphaMax,21);
-        beta = [pars.betaMin,pars.beta,pars.betaMax];
-        for i = 1:length(alpha)
-            pars.alpha = alpha(i);
-            for j = 1:length(beta)
-                pars.beta = beta(j);
-                    [S,actions,x,V,~,presentVal] = main(pars);
-                    optS(i,j,s) = {[x V S]};
-                    strategy(i,j,s) = {actions};
-                    NPV(i,j,s) = {presentVal};
-            end
-        end
-    end
-    DevelopmentOutput.NPV = NPV;
-    DevelopmentOutput.optS = optS;
-    DevelopmentOutput.strategy = strategy;
-    DevelopmentOutput.alpha = alpha;
-    DevelopmentOutput.beta = beta;
-    save(strcat(output_folder,'/DevelopmentOutput'),'DevelopmentOutput');
-    
-    %Focus on alpha
-    n1 = 15;
-    NPV = cell(n1,3);
-    optS = cell(n1,3);
-    strategy = cell(n1,3);
-    scenarios = [0 1 2];
-    for s = 1:length(scenarios)
-        scenario = scenarios(s);
-        pars = parameters(scenario);
-        alpha = linspace(1,1.35,n1);
-        for i = 1:length(alpha)
-            pars.alpha = alpha(i);
-            [S,actions,x,V,~,presentVal] = main(pars);
-            optS(i,s) = {[x V S]};
-            strategy(i,s) = {actions};
-            NPV(i,s) = {presentVal};
-        end
-    end
-    AlphaOutput.NPV = NPV;
-    AlphaOutput.optS = optS;
-    AlphaOutput.strategy = strategy;
-    AlphaOutput.alpha = alpha;
-    save(strcat(output_folder,'/AlphaOutput'),'AlphaOutput');
+%     
+%     % Effect of development parameters: alpha and beta
+%     scenarios = 0:2; 
+%     NPV = cell(3,3,length(scenarios));
+%     optS = cell(3,3,length(scenarios));
+%     strategy = cell(3,3,length(scenarios));
+%     for s = 1:length(scenarios)
+%         scenario = scenarios(s);
+%         pars = parameters(scenario);
+%         alpha = linspace(pars.alphaMin,pars.alphaMax,21);
+%         beta = [pars.betaMin,pars.beta,pars.betaMax];
+%         for i = 1:length(alpha)
+%             pars.alpha = alpha(i);
+%             for j = 1:length(beta)
+%                 pars.beta = beta(j);
+%                     [S,actions,x,V,~,presentVal] = main(pars);
+%                     optS(i,j,s) = {[x V S]};
+%                     strategy(i,j,s) = {actions};
+%                     NPV(i,j,s) = {presentVal};
+%             end
+%         end
+%     end
+%     DevelopmentOutput.NPV = NPV;
+%     DevelopmentOutput.optS = optS;
+%     DevelopmentOutput.strategy = strategy;
+%     DevelopmentOutput.alpha = alpha;
+%     DevelopmentOutput.beta = beta;
+%     save(strcat(output_folder,'/DevelopmentOutput'),'DevelopmentOutput');
+%     
+%     %Focus on alpha
+%     n1 = 15;
+%     NPV = cell(n1,3);
+%     optS = cell(n1,3);
+%     strategy = cell(n1,3);
+%     scenarios = [0 1 2];
+%     for s = 1:length(scenarios)
+%         scenario = scenarios(s);
+%         pars = parameters(scenario);
+%         alpha = linspace(1,1.35,n1);
+%         for i = 1:length(alpha)
+%             pars.alpha = alpha(i);
+%             [S,actions,x,V,~,presentVal] = main(pars);
+%             optS(i,s) = {[x V S]};
+%             strategy(i,s) = {actions};
+%             NPV(i,s) = {presentVal};
+%         end
+%     end
+%     AlphaOutput.NPV = NPV;
+%     AlphaOutput.optS = optS;
+%     AlphaOutput.strategy = strategy;
+%     AlphaOutput.alpha = alpha;
+%     save(strcat(output_folder,'/AlphaOutput'),'AlphaOutput');
     
     % Effect of exponential development rate
     n2 = 11;
@@ -164,16 +164,21 @@ if Development
     optS = cell(n2,3);
     NPV = cell(n2,3);
     valueFunc = zeros(n2,3);
+    damageOpt = zeros(n2,3);
+    damageBase = zeros(n2,3);
     for scenario = 0:2
         pars = parameters(scenario);
         for i = 1:n2
             pars.d = d(i);           
             % Solve system and save outputs of interest
-            [S,actions,x,V,~,presentVal,~,~,v] = main(pars);
+            [S,actions,x,V,~,presentVal,~,~,v,DOpt] = main(pars);
             optS(i,scenario+1) = {[x V S]};
             strategy(i,scenario+1) = {actions};
             NPV(i,scenario+1) = {presentVal};
             valueFunc(i,scenario+1) = v;
+            damageOpt(i,scenario+1) = sum(DOpt);
+            [~,~,~,baseCosts] = coupledSystem(pars,zeros(100,1),0);
+            damageBase(i,scenario+1) = sum(baseCosts(:,3));
         end
     end
     dOutput.NPV = NPV;
@@ -181,33 +186,35 @@ if Development
     dOutput.strategy = strategy;
     dOutput.d = d;
     dOutput.valueFunc = valueFunc;
+    dOutput.damageOpt = damageOpt;
+    dOutput.damageBase = damageBase;
     save(strcat(output_folder,'/dOutput'),'dOutput');
-    
-    % Dependence on baseline property value
-    n3 = 15;
-    A = linspace(pars.AMin,pars.AMax,n3);
-    strategy = cell(n3,3);
-    optS = cell(n3,3);
-    NPV = cell(n3,3);
-    valueFunc = zeros(n3,3);
-    for scenario = 0:2
-        pars = parameters(scenario);
-        for i = 1:n3
-            pars.A = A(i);           
-            % Solve system and save outputs of interest
-            [S,actions,x,V,~,presentVal,~,~,v] = main(pars);
-            optS(i,scenario+1) = {[x V S]};
-            strategy(i,scenario+1) = {actions};
-            NPV(i,scenario+1) = {presentVal};
-            valueFunc(i,scenario+1) = v;
-        end
-    end
-    AOutput.NPV = NPV;
-    AOutput.optS = optS;
-    AOutput.strategy = strategy;
-    AOutput.A = A;
-    AOutput.valueFunc = valueFunc;
-    save(strcat(output_folder,'/AOutput'),'AOutput');
+%     
+%     % Dependence on baseline property value
+%     n3 = 15;
+%     A = linspace(pars.AMin,pars.AMax,n3);
+%     strategy = cell(n3,3);
+%     optS = cell(n3,3);
+%     NPV = cell(n3,3);
+%     valueFunc = zeros(n3,3);
+%     for scenario = 0:2
+%         pars = parameters(scenario);
+%         for i = 1:n3
+%             pars.A = A(i);           
+%             % Solve system and save outputs of interest
+%             [S,actions,x,V,~,presentVal,~,~,v] = main(pars);
+%             optS(i,scenario+1) = {[x V S]};
+%             strategy(i,scenario+1) = {actions};
+%             NPV(i,scenario+1) = {presentVal};
+%             valueFunc(i,scenario+1) = v;
+%         end
+%     end
+%     AOutput.NPV = NPV;
+%     AOutput.optS = optS;
+%     AOutput.strategy = strategy;
+%     AOutput.A = A;
+%     AOutput.valueFunc = valueFunc;
+%     save(strcat(output_folder,'/AOutput'),'AOutput');
 end
 
 %% Damage functions

@@ -21,7 +21,7 @@
 %   cost
 %   benefit
 
-function [optS,actions,x,V,L,NPV,C,B,valueFunc] = main(pars)
+function [optS,actions,x,V,L,NPV,C,B,valueFunc,damage] = main(pars)
 %% Parameter values
 if ~exist('pars','var')
     pars = parameters(0);
@@ -129,7 +129,7 @@ optS = S(Si,:);
 [x,V,L] = xVL(optS,pars);
 
 %% Calculate costs and benefits
-C = cost(optS,actions,pars);
+[C,~,~,damage] = cost(optS,actions,pars);
 B = benefit(optS,pars);
 NPV = cumsum((B-C)./(1+pars.delta).^optS(:,2));
 
